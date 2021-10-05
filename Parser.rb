@@ -23,7 +23,7 @@
 load "Token.rb"
 load "Lexer.rb"
 class Parser < Scanner
-	errors = 0;
+	
 	def initialize(filename)
     	super(filename)
     	consume()
@@ -38,17 +38,19 @@ class Parser < Scanner
   	
 	def match(dtype)
       	if (@lookahead.type != dtype)
-			errors += 1
+			@errors += 1
          	puts "Expected #{dtype} found #{@lookahead.text}"
       	end
       	consume()
    	end
    	
 	def program()
+		@errors = 0;
       	while( @lookahead.type != Token::EOF)
         	puts "Entering STMT Rule"
 			statement()  
       	end
+		puts "There were #{@errors} parse errors found"
    	end
 
 	def statement()
@@ -63,6 +65,7 @@ class Parser < Scanner
 		end
 		
 		puts "Exiting STMT Rule"
+
 	end
 
 	def assign()
@@ -98,7 +101,7 @@ class Parser < Scanner
 			etail() 
 		else
 			puts "Did not find ADDOP or SUBOP Token, choosing EPSILON production"
-		END
+		end
 		puts "Exiting ETAIL Rule"
 	end
 
@@ -127,7 +130,7 @@ class Parser < Scanner
 			ttail()
 		else
 			puts "Did not find MULTOP or DIVOP token, choosing EPSILON production"
-		END
+		end
 		puts "Exiting TTAIL Rule"
 	end
 
@@ -138,20 +141,20 @@ class Parser < Scanner
 			puts "Entering EXP Rule"
 			exp()
 			if(@lookahead.type == Token::RPAREN)
-				puts "Found RPAREN token: #{lookahead.text}"
+				puts "Found RPAREN token: #{@lookahead.text}"
 				match(Token::RPAREN)
 			else
 				match(Token::RPAREN)
-			END
+			end
 		elsif(@lookahead.type == Token::INT)
 			int()
 		elsif(@lookahead.type == Token::ID)
-			id()
+						id()
 		else
 			"Expected ( or INT or ID found #{@lookahead.text}"
-			errors += 1
+			@errors += 1
 			consume()
-		END
+		end
 		puts "Exiting FACTOR Rule"		
 	end
 
@@ -161,7 +164,7 @@ class Parser < Scanner
 			match(Token::ID)
 		else
 			match(Token::ID)
-		END
+		end
 	end
 
 	def assgn()
@@ -170,7 +173,16 @@ class Parser < Scanner
 			match(Token::ASSGN)
 		else
 			match(Token::ASSGN)
-		END
+		end
+	end
+
+	def int()
+		if(@lookahead.type == Token::INT)
+			puts "Found INT Token: #{@lookahead.text}"
+			match(Token::INT)
+		else
+			match(Token::INT)
+		end
 	end
 
 end
