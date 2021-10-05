@@ -23,6 +23,7 @@
 load "Token.rb"
 load "Lexer.rb"
 class Parser < Scanner
+	errors = 0;
 	def initialize(filename)
     	super(filename)
     	consume()
@@ -37,6 +38,7 @@ class Parser < Scanner
   	
 	def match(dtype)
       	if (@lookahead.type != dtype)
+			errors += 1
          	puts "Expected #{dtype} found #{@lookahead.text}"
       	end
       	consume()
@@ -62,4 +64,113 @@ class Parser < Scanner
 		
 		puts "Exiting STMT Rule"
 	end
+
+	def assign()
+		id()
+		assgn()
+		puts "Entering EXP Rule"
+		exp()
+		puts "Exiting ASSIGN Rule"
+	end
+
+	def exp()
+		puts "Entering TERM Rule"
+		term()
+		puts "Entering ETAIL Rule"
+		etail()
+		puts "Exiting EXP Rule"
+	end
+	
+	def etail()
+		if(@lookahead.type == Token::ADDOP)
+			puts "Found ADDOP Token: #{@lookahead.text}"
+			match(Token::ADDOP)
+			puts "Entering TERM Rule"
+			term()
+			puts "Entering ETAIL Rule"
+			etail()
+		elsif(@lookahead.type == Token::SUBOP)
+			put "Found SUBOP Token: #{@lookahead.text}"
+			match(Token::SUBOP)
+			puts "Entering TERM Rule"
+			term()
+			puts "Entering ETAIL Rule"
+			etail() 
+		else
+			puts "Did not find ADDOP or SUBOP Token, choosing EPSILON production"
+		END
+		puts "Exiting ETAIL Rule"
+	end
+
+	def term()
+		puts "Entering FACTOR Rule"
+		factor()
+		puts "Entering TTAIL Rule"
+		ttail()
+		puts "Exiting TERM Rule"
+	end
+
+	def ttail()
+		if(@lookahead.type == Token::MULTOP)
+			puts "Found MULTOP Token: #{@lookahead.text}"
+			match(Token::MULTOP)
+			puts "Entering FACTOR Rule"
+			factor()
+			puts "Entering TTAIL Rule"
+			ttail()
+		elsif(@lookahead.type == Token::DIVOP)
+			puts "Found DIVOP Token: #{@lookahead.text}"
+			match(Token::DIVOP)
+			puts "Entering FACTOR Rule"
+			factor()
+			puts "Entering TTAIL Rule"
+			ttail()
+		else
+			puts "Did not find MULTOP or DIVOP token, choosing EPSILON production"
+		END
+		puts "Exiting TTAIL Rule"
+	end
+
+	def factor()
+		if(@lookahead.type == Token::LPAREN)
+			puts "Found LPAREN Token: #{@lookahead.text}"
+			match(Token::LPAREN)
+			puts "Entering EXP Rule"
+			exp()
+			if(@lookahead.type == Token::RPAREN)
+				puts "Found RPAREN token: #{lookahead.text}"
+				match(Token::RPAREN)
+			else
+				match(Token::RPAREN)
+			END
+		elsif(@lookahead.type == Token::INT)
+			int()
+		elsif(@lookahead.type == Token::ID)
+			id()
+		else
+			"Expected ( or INT or ID found #{@lookahead.text}"
+			errors += 1
+			consume()
+		END
+		puts "Exiting FACTOR Rule"		
+	end
+
+	def id()
+		if(@lookahead.type == Token::ID)
+			puts "Found ID Token: #{@lookahead.text}"
+			match(Token::ID)
+		else
+			match(Token::ID)
+		END
+	end
+
+	def assgn()
+		if(@lookahead.type == Token::ASSGN)
+			puts "Found ASSGN Token: #{@lookahead.text}"
+			match(Token::ASSGN)
+		else
+			match(Token::ASSGN)
+		END
+	end
+
 end
