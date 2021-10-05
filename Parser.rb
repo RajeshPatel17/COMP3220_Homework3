@@ -149,9 +149,9 @@ class Parser < Scanner
 		elsif(@lookahead.type == Token::INT)
 			int()
 		elsif(@lookahead.type == Token::ID)
-						id()
+			id()
 		else
-			"Expected ( or INT or ID found #{@lookahead.text}"
+			puts "Expected ( or INT or ID found #{@lookahead.text}"
 			@errors += 1
 			consume()
 		end
