@@ -50,7 +50,7 @@ class Parser < Scanner
         	puts "Entering STMT Rule"
 			statement()  
       	end
-		puts "There were #{@errors} parse errors found"
+		puts "There were #{@errors} parse errors found."
    	end
 
 	def statement()
@@ -73,7 +73,7 @@ class Parser < Scanner
 		assgn()
 		puts "Entering EXP Rule"
 		exp()
-		puts "Exiting ASSIGN Rule"
+		puts "Exiting ASSGN Rule"
 	end
 
 	def exp()
@@ -129,7 +129,7 @@ class Parser < Scanner
 			puts "Entering TTAIL Rule"
 			ttail()
 		else
-			puts "Did not find MULTOP or DIVOP token, choosing EPSILON production"
+			puts "Did not find MULTOP or DIVOP Token, choosing EPSILON production"
 		end
 		puts "Exiting TTAIL Rule"
 	end
@@ -141,7 +141,7 @@ class Parser < Scanner
 			puts "Entering EXP Rule"
 			exp()
 			if(@lookahead.type == Token::RPAREN)
-				puts "Found RPAREN token: #{@lookahead.text}"
+				puts "Found RPAREN Token: #{@lookahead.text}"
 				match(Token::RPAREN)
 			else
 				match(Token::RPAREN)
