@@ -1,3 +1,3 @@
 load "Parser.rb"
-parse = Parser.new("input3.tiny")
+parse = Parser.new("input5.tiny")
 parse.program()
